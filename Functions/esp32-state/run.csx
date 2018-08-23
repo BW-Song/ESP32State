@@ -13,7 +13,7 @@ static ServiceClient serviceClient;
 static string connectionString = Environment.GetEnvironmentVariable("iotHubConnectionString");
 
 // Modify the device name for your environment
-static string deviceName = "t-yiwche-test2-iothub-device";
+static string deviceName = "";
 
 public static async Task<HttpResponseMessage> Run(HttpRequestMessage req, TraceWriter log)
 {
