@@ -13,13 +13,13 @@ Preferences preferences;
 #define DEVICE_ID "Esp32Device"
 #define MESSAGE_MAX_LEN 512
 // Please input the SSID and password of WiFi
-const char* ssid     = "bbbb";
-const char* password = "chenyiwen123";
+const char* ssid     = "";
+const char* password = "";
 
 /*String containing Hostname, Device Id & Device Key in the format:                         */
 /*  "HostName=<host_name>;DeviceId=<device_id>;SharedAccessKey=<device_key>"                */
 /*  "HostName=<host_name>;DeviceId=<device_id>;SharedAccessSignature=<device_sas_token>"    */
-static const char* connectionString = "HostName=t-yiwche-test2-iothub.azure-devices.net;DeviceId=t-yiwche-test2-iothub-device;SharedAccessKey=r7R7WIaz/qzxrZGibiTO7xUHdkpb5f6mT7L0iY6S6Yc=";
+static const char* connectionString = "";
 const char *messageData = "%d: %s (%d)\\n  ";
 static bool hasIoTHub = false;
 static bool hasWifi = false;
