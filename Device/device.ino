@@ -8,18 +8,10 @@
 
 Preferences preferences;
 
-
 #define INTERVAL 10000
 #define DEVICE_ID "Esp32Device"
 #define MESSAGE_MAX_LEN 512
-// Please input the SSID and password of WiFi
-const char* ssid     = "";
-const char* password = "";
 
-/*String containing Hostname, Device Id & Device Key in the format:                         */
-/*  "HostName=<host_name>;DeviceId=<device_id>;SharedAccessKey=<device_key>"                */
-/*  "HostName=<host_name>;DeviceId=<device_id>;SharedAccessSignature=<device_sas_token>"    */
-static const char* connectionString = "";
 const char *messageData = "%d: %s (%d)\\n  ";
 static bool hasIoTHub = false;
 static bool hasWifi = false;
@@ -60,6 +52,17 @@ static int  DeviceMethodCallback(const char *methodName, const unsigned char *pa
 void setup() {
   Serial.begin(115200);
   WiFi.mode(WIFI_AP_STA);
+
+  preferences.begin("Connections");
+  const char *ssid, *password, *connectionString;
+  String s = preferences.getString("WiFi_SSID");
+  String p =preferences.getString("WiFi_Password");
+  String cs = preferences.getString("ConStr");
+  ssid = s.c_str();
+  password = p.c_str();
+  connectionString = cs.c_str();
+  preferences.end();
+
   WiFi.begin(ssid, password);
   Serial.println("Starting connecting WiFi.");
   delay(10);
