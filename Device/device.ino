@@ -4,9 +4,15 @@
 
 #include <WiFi.h>
 #include "Esp32MQTTClient.h"
+#include <DNSServer.h>
+#include <WebServer.h>
+#include <WiFiManager.h>
 #include <Preferences.h>
 
+WiFiManager wifiManager;
+char* connectionStr;
 Preferences preferences;
+WiFiManagerParameter conStr("ConnectionString","ConnectionString",connectionStr,40);
 
 #define INTERVAL 10000
 #define DEVICE_ID "Esp32Device"
@@ -48,34 +54,30 @@ static int  DeviceMethodCallback(const char *methodName, const unsigned char *pa
   return result;
 }
 
+void saveConfigCallback()
+{
+  preferences.putString("WiFi_SSID",wifiManager.getSSID());
+  preferences.putString("WiFi_Password",wifiManager.getPassword());
+  preferences.putString("ConStr",String(conStr.getValue()));
+}
 
 void setup() {
   Serial.begin(115200);
   WiFi.mode(WIFI_AP_STA);
 
   preferences.begin("Connections");
-  const char *ssid, *password, *connectionString;
-  String s = preferences.getString("WiFi_SSID");
-  String p =preferences.getString("WiFi_Password");
-  String cs = preferences.getString("ConStr");
-  ssid = s.c_str();
-  password = p.c_str();
-  connectionString = cs.c_str();
+  // wifiManager.resetSettings();
+  wifiManager.setDebugOutput(false);
+  wifiManager.addParameter(&conStr);
+  wifiManager.setSaveParamsCallback(saveConfigCallback);
+  wifiManager.autoConnect("ESP32-WiFiConfig", "AzureSet");
   preferences.end();
-
-  WiFi.begin(ssid, password);
-  Serial.println("Starting connecting WiFi.");
-  delay(10);
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
-    hasWifi = false;
-  }
   hasWifi = true;
   
   Serial.println("WiFi connected");
   Serial.println("IP address: ");
   Serial.println(WiFi.localIP());
+  const char* connectionString = conStr.getValue();
   if (!Esp32MQTTClient_Init((const uint8_t*)connectionString, true))
   {
     hasIoTHub = false;
